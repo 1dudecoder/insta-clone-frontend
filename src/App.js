@@ -1,6 +1,6 @@
 import React, {useEffect,createContext,useReducer,useContext} from "react"
 import NavBar from "./components/Navbar"
-import {BrowserRouter as Router,Switch,Route,useHistory} from "react-router-dom"
+import {BrowserRouter as Router,Switch,Route,useHistory,useLocation} from "react-router-dom"
 import "./App.css"
 import Home from "./components/screens/Home"
 import Profile from "./components/screens/Profile"
@@ -15,6 +15,7 @@ export const userContext = createContext();
 const Routing = () => {
   //we created seprate routing for using usehistory beacuse it can be only used inside router so we have no other option 
   const history = useHistory();
+  const location = useLocation();
   const {state,dispatch} = useContext(userContext);
 
   useEffect(()=>{
@@ -22,7 +23,9 @@ const Routing = () => {
     const user = JSON.parse(localStorage.getItem("user"))
     if(user){
       dispatch({type:"USER",payload:user})
-      history.push("/");
+      if(location.pathname == "/login"){
+        history.push("/");
+      }
     }else{
       history.push("/login");
     }

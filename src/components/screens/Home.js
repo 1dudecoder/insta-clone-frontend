@@ -1,56 +1,153 @@
-import React from 'react'
+import React,{useState,useEffect, useContext} from 'react'
+import { userContext } from '../../App'
 
 function Home() {
+
+    const [data,setData] = useState([]);
+    const [likecount,setLikeCount] = useState(false);
+    const {state,dispatch} = useContext(userContext)
+
+    useEffect(()=>{
+       fetch("/allpost",{
+           headers:{
+               "Authorization" : "Bearer "+ localStorage.getItem("jwt"),
+           }
+       }).then(res=>res.json())
+       .then(data=>{
+           console.log(data.posts);
+           setData(data.posts);
+       })
+    },[data])
+
+    const likePost = (id) => {
+        fetch("/like",{
+            method:"put",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            },
+            body:JSON.stringify({
+                postId: id
+            })
+        }).then(res=>res.json())
+        .then((result)=>{
+            console.log(result);
+        })
+    }
+
+    const unlikePost = (id) => {
+        fetch("/unlike",{
+            method:"put",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            },
+            body:JSON.stringify({
+                postId: id
+            })
+        }).then(res=>res.json())
+        .then((result)=>{
+            console.log(result);
+        })
+    }
+
+    const makeComment = (text,postId)=>{
+        fetch("/comment",{
+            method:"put",
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization":"Bearer "+localStorage.getItem("jwt")
+            },
+            body:JSON.stringify({
+                postId,
+                text
+            })
+        }).then(res=>res.json()).then((result)=>{
+            console.log("this is commnets result " , result);
+            const newdata = data.map(item=>{
+                if(item._id == result._id){
+                    return result
+                }else{
+                    return item
+                }
+            })
+            console.log(newdata);
+            setData(newdata)
+
+        })
+    }
+
+
     return (
         <div className="home">
-            <div className="card home-card">
-                <h5 style={{marginLeft:"3rem", fontWeight:"bold" ,fontSize:"20px"}}>Nitin Negi</h5>
+        {
+            
+            data.map(item=>{
+
+                return(
+            <div className="card home-card" key={item._id}>
+            <h5 style={{marginLeft:"3rem", fontWeight:"bold" ,fontSize:"20px"}}>{item.postedBy.name}</h5>
                 <div >
-                    <img src="https://images.unsplash.com/photo-1556950961-8c092986258e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60" alt="img1" />
+                    <center><img src={item.photo} alt="img4" /></center>
                 </div>
-                <i className="material-icons" style={{color:"red" ,marginTop:"1rem",  marginLeft:"1rem", fontSize:"2rem"}}>favorite</i>
+
+                {
+                 !item.likes.includes(state._id) ?   
+                <i className="material-icons" onClick={()=>{
+
+                    if(likecount == false){   
+                        likePost(item._id);
+                        setLikeCount(true);
+                    }
+
+                }} style={{marginTop:"1rem",  marginLeft:"1rem", fontSize:"2.5rem"}}>favorite_border</i>
+                
+                :
+
+                <i className="material-icons"  onClick={()=>{
+
+                    if(likecount == true){
+                        unlikePost(item._id);
+                        setLikeCount(false);
+                    }
+                
+                }}
+                style={{color:"red" ,marginTop:"1rem",  marginLeft:"1rem", fontSize:"2.5rem"}}>favorite</i>
+
+                }
+                <h6 style={{marginLeft:"1.5rem"}}>{item.likes.length} likes</h6>
+
                 <div className="card-content"> 
-                    <h6>Title</h6>
-                    <p>this is amazing photo</p>
+                     <span style={{fontWeight:"bold"}}>{item.postedBy.name} :- </span> <span> {item.title}</span>
+                     <p>{item.body}</p>
+
+                    <p>{item.comments.map(record=>{
+
+                        return(
+                            <>
+                            <span style={{fontWeight:"bold" , fontSize:"13px"}}>{record.postedBy.name +" "}
+                            </span> <span>{record.text}</span><br/>
+                            </>
+                        )
+                    })}
+                    </p>
+
+                    <form onSubmit={(e)=>{
+                        e.preventDefault()
+                        makeComment(e.target[0].value,item._id)
+                        e.currentTarget.reset() 
+                        }}>
+
                     <input type="text" placeholder="comments" />
+
+                    </form>
+
                 </div>
             </div>
-            <div className="card home-card">
-            <h5 style={{marginLeft:"3rem", fontWeight:"bold" ,fontSize:"20px"}}>Nitin Negi</h5>
-                <div >
-                    <img src="https://images.unsplash.com/photo-1556401193-a9dda25073e4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTd8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=700&q=60" alt="img4" />
-                </div>
-                <i className="material-icons" style={{color:"red" ,marginTop:"1rem",  marginLeft:"1rem", fontSize:"2rem"}}>favorite</i>
-                <div className="card-content"> 
-                    <h6>Title</h6>
-                    <p>this is amazing photo</p>
-                    <input type="text" placeholder="comments" />
-                </div>
-            </div>
-            <div className="card home-card">
-            <h5 style={{marginLeft:"3rem", fontWeight:"bold" ,fontSize:"20px"}}>Nitin Negi</h5>
-                <div >
-                    <img src="https://images.unsplash.com/photo-1556480435-b7b37fd635d6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTR8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=700&q=60" alt="img3" />
-                </div>
-                <i className="material-icons" style={{color:"red" ,marginTop:"1rem",  marginLeft:"1rem", fontSize:"2rem"}}>favorite</i>
-                <div className="card-content"> 
-                    <h6>Title</h6>
-                    <p>this is amazing photo</p>
-                    <input type="text" placeholder="comments" />
-                </div>
-            </div>
-            <div className="card home-card">
-            <h5 style={{marginLeft:"3rem", fontWeight:"bold" ,fontSize:"20px"}}>Nitin Negi</h5>
-                <div >
-                    <img src="https://images.unsplash.com/photo-1556401193-a9dda25073e4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTd8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=700&q=60" alt="img4" />
-                </div>
-                <i className="material-icons" style={{color:"red" ,marginTop:"1rem",  marginLeft:"1rem", fontSize:"2rem"}}>favorite</i>
-                <div className="card-content"> 
-                    <h6>Title</h6>
-                    <p>this is amazing photo</p>
-                    <input type="text" placeholder="comments" />
-                </div>
-            </div>
+                )
+            })
+        }
+
 
         </div>
     )

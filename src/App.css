@@ -67,16 +67,18 @@ a{
     flex-wrap: wrap;
     justify-content: space-around;
     max-width:60vw !important;
+    margin-bottom: 5rem;
 }
 
 .items{
     margin-top: 1rem;
-    width: 30%;
+    object-fit: contain;
+    display: flex;  
+    flex-wrap: wrap;
 }
 
-
 .home-card{
-    max-width: fit-content;
+    max-width: 750px;
     height: max-content;
     margin: 25px auto ;
 }
@@ -88,6 +90,25 @@ a{
 .card .card-content{
     padding: 13px !important;
 }
+
+.card img{
+    width: 750px;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+.home i {
+    cursor:pointer !important ;
+    caret-color: transparent;
+}
+
+i:active {
+    animation: push 0.2s linear 1;
+}
+
+@keyframes push{
+    50%  {transform: scale(1.4);}
+  }
 
 
 
