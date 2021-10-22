@@ -1,13 +1,13 @@
 import React,{useEffect,useState,useContext} from 'react'
 import { userContext } from '../../App'
 
-
 function Profile() {
 
     const [pics,setPics] = useState([])
     const {state,dispatch} = useContext(userContext)
 
     useEffect(() => {
+        console.log("hellow their")
         fetch('/mypost' ,{
             headers : {
                 "Authorization" : "Bearer "+ localStorage.getItem("jwt"),
@@ -29,13 +29,18 @@ function Profile() {
 
                 <div style={{ marginLeft:"5rem" , marginTop:"2rem"}}>
                     <h5>{state ? state.name : "loading" }</h5>
+                    <h4>{state ? state.email : "loading" }</h4>
 
                     <div style={{display:"flex", justifyContent:"space-between" ,width:"25rem"}}>
-                        <h6>140 posts</h6>
-                        <h6>140 follower</h6>
-                        <h6>140 following</h6>
+                        <h6> {pics.length} Posts</h6>
+                        <h6> {state ? state.followers.length : 0 } Followers</h6>
+                        <h6> {state ? state.following.length : 0 } Following</h6>
                     </div>
+
+                    
                 </div>
+
+
             </div>
             <div className="galary">
             {

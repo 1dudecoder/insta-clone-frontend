@@ -1,5 +1,6 @@
 import React,{useState,useEffect, useContext} from 'react'
 import { userContext } from '../../App'
+import {Link} from "react-router-dom"
 
 function Home() {
 
@@ -77,6 +78,20 @@ function Home() {
         })
     }
 
+    const deletePost = (postId)=>{
+        console.log(postId);
+        fetch(`/deletepost/${postId}`,{
+            method:"delete",
+            headers:{
+                Authorization:"Bearer "+ localStorage.getItem("jwt")
+            }
+        }).then((res)=>res.json())
+        .then(result=>{
+            console.log(result);
+
+        })
+    }
+
 
     return (
         <div className="home">
@@ -85,8 +100,18 @@ function Home() {
             data.map(item=>{
 
                 return(
-            <div className="card home-card" key={item._id}>
-            <h5 style={{marginLeft:"3rem", fontWeight:"bold" ,fontSize:"20px"}}>{item.postedBy.name}</h5>
+                <div className="card home-card" key={item._id}>
+                <h5 style={{marginLeft:"3rem", fontWeight:"bold" ,fontSize:"20px" , display:"flex" }}> <Link to={item.postedBy._id != state._id ? "/profile/" + item.postedBy._id : "/profile/"} > {item.postedBy.name} </Link> 
+                {item.postedBy._id == state._id ?         
+                    <span onClick={()=>{
+                    deletePost(item._id)
+                }} style={{marginLeft:"40rem" , display:"flex", justifyContent:"center" , alignItems:"center" , cursor:"pointer", caretColor:"transparent" }} className="material-icons">
+                    delete
+                </span> : "" } 
+
+            
+            </h5>
+ 
                 <div >
                     <center><img src={item.photo} alt="img4" /></center>
                 </div>
