@@ -9,6 +9,9 @@ function SignUp() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [cpassword, setCpassword] = useState("")
+    const [image,setImage] = useState("")
+    const [imageurl,setImageUrl] = useState("")
+
     let history = useHistory();
 
     const HomeButton = () => {
@@ -58,7 +61,7 @@ function SignUp() {
                     <input className="input-field" value={password}  onChange={(e)=>{setPassword(e.target.value)}} type="password" placeholder="Password"/>
                     <input className="input-field" value={cpassword}  onChange={(e)=>{setCpassword(e.target.value)}} type="password" placeholder="Password"/>
                     <button onClick={()=>{
-                        
+                
                         if(!name || !email || !password || !cpassword){
                             M.toast({html: 'plese fill all the fields !',classes:"red"})  
 

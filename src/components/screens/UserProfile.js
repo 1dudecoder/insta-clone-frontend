@@ -24,6 +24,19 @@ function UserProfile() {
             }
             setPics(data.posts)
             setUserProfile(data.user)
+            console.log(data.user)
+
+            let mydata = data.user.followers.filter(item => item == state._id); 
+            
+            if(state){
+                if(mydata.length == 0){
+                    setshowfollow(true)
+                }else{
+                    setshowfollow(false)
+                }
+            }
+
+
         })
      },[])
     
@@ -76,9 +89,9 @@ function UserProfile() {
         })
     }
 
-
     return (
         <>
+        
             {errorfound==true ? <center><h1 style={{marginTop:"13rem"}}>USER NOT FOUND ! </h1></center> :
          <div>
 

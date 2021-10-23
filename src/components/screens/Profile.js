@@ -3,8 +3,8 @@ import { userContext } from '../../App'
 
 function Profile() {
 
-    const [pics,setPics] = useState([])
-    const {state,dispatch} = useContext(userContext)
+    const [pics , setPics] = useState([])
+    const {state , dispatch} = useContext(userContext)
 
     useEffect(() => {
         console.log("hellow their")
@@ -15,6 +15,7 @@ function Profile() {
         }).then(res => res.json())
         .then( data => {
             setPics(data.myposts)
+            
         })
      },[])
 
